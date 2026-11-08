@@ -304,17 +304,28 @@
     align-self: flex-end;
   }
 
+  #view-ai {
+    padding-bottom: 150px;
+  }
+
   .chat-form {
-    position: sticky;
-    bottom: calc(var(--nav-h) + var(--badge-h) + var(--safe-bottom) + 8px);
-    margin-top: 16px;
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(var(--nav-h) + var(--badge-h) + var(--safe-bottom) + 10px);
+    z-index: 9;
+    max-width: 696px;
+    margin: 0 auto;
     display: flex;
     gap: 8px;
     padding: 8px;
-    background: var(--surface);
+    background: #141414;
     border: 1px solid var(--line);
     border-radius: 16px;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
   }
+
+
 
   .chat-form input {
     flex: 1;
