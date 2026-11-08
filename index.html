@@ -261,6 +261,15 @@
     font-size: 14.5px;
     color: var(--text-2);
     line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .news-item.open .news-summary {
+    display: block;
+    overflow: visible;
   }
 
   .toggle {
@@ -300,7 +309,9 @@
   .news-full > div { overflow: hidden; min-height: 0; }
 
   .news-full-inner {
-    padding: 0 18px 18px;
+    margin: 0 18px;
+    padding: 14px 0 18px;
+    border-top: 1px solid var(--glass-edge);
     opacity: 0;
     transform: translate3d(0, -4px, 0);
     transition: opacity 0.4s ease 0.05s, transform 0.5s var(--ease-out) 0.05s;
@@ -650,6 +661,7 @@
     }
   ];
 
+  const NEWS_URL = "https://raw.githubusercontent.com/pixmobi222-del/poltava-news/main/news.json";
   const NEW_WINDOW_MS = 60 * 60 * 1000; // позначка «Нове» для новин за останню годину
   const REFRESH_MS = 60 * 1000;         // перевірка оновлень щохвилини
   const SVG_NS = "http://www.w3.org/2000/svg";
@@ -724,7 +736,9 @@
     const full = el("div", "news-full");
     const wrap = el("div");
     const inner = el("div", "news-full-inner");
-    inner.append(el("p", null, item.full));
+    if (item.full && item.full !== item.summary) {
+      inner.append(el("p", null, item.full));
+    }
     const row = el("div", "source-row");
     const link = el("a", "source", item.source);
     link.href = item.url || "#";
@@ -777,7 +791,7 @@
   async function loadNews() {
     let items = SAMPLE;
     try {
-      const res = await fetch("news.json", { cache: "no-store" });
+      const res = await fetch(NEWS_URL + "?t=" + Date.now(), { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) items = data;
