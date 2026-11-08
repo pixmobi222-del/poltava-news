@@ -3,306 +3,623 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0b">
 <title>Полтава Новини</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0b0b0b;
-    --surface: #151515;
+    --surface: #141414;
+    --surface-2: #1c1c1c;
     --line: #242424;
     --orange: #ff7a1a;
-    --orange-soft: rgba(255, 122, 26, 0.14);
-    --text: #f2f2f2;
-    --muted: #8c8c8c;
+    --orange-deep: #e0600a;
+    --orange-soft: rgba(255, 122, 26, 0.12);
+    --text: #f3f3f3;
+    --text-2: #c9c9c9;
+    --muted: #8a8a8a;
+    --nav-h: 66px;
+    --badge-h: 64px;
     --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html { -webkit-text-size-adjust: 100%; }
+
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: "Manrope", system-ui, sans-serif;
+    font-family: "Manrope", system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
     min-height: 100dvh;
-    padding-bottom: calc(92px + var(--safe-bottom));
+    padding-bottom: calc(var(--nav-h) + var(--badge-h) + var(--safe-bottom) + 24px);
     -webkit-font-smoothing: antialiased;
   }
 
+  button, input { font: inherit; color: inherit; }
+
+  :focus-visible {
+    outline: 2px solid var(--orange);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  /* ---------- Шапка ---------- */
   header {
-    padding: 28px 20px 12px;
+    padding: 26px 20px 0;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
   }
 
   .brand {
     font-family: "Unbounded", sans-serif;
     font-weight: 800;
-    font-size: 22px;
+    font-size: clamp(20px, 5.4vw, 30px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
     color: var(--orange);
-    letter-spacing: -0.5px;
+  }
+
+  .brand span {
+    color: var(--text);
+  }
+
+  .updated {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
   }
 
   .greeting {
-    margin-top: 14px;
-    padding: 14px 16px;
-    border-left: 3px solid var(--orange);
+    margin-top: 16px;
+    padding: 14px 16px 14px 18px;
     background: var(--surface);
-    border-radius: 0 12px 12px 0;
+    border-radius: 0 14px 14px 0;
+    border-left: 3px solid var(--orange);
     font-size: 15px;
-    line-height: 1.5;
+    color: var(--text-2);
   }
 
+  /* ---------- Основна частина ---------- */
   main {
-    padding: 8px 16px 24px;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 18px 16px 0;
   }
 
   .view { display: none; }
-  .view.active { display: block; }
+  .view.active { display: block; animation: enter 0.45s var(--ease) both; }
 
-  .news-item {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 14px 16px;
-    margin-bottom: 12px;
-    cursor: pointer;
-    transition: border-color 0.2s ease;
+  @keyframes enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
   }
 
-  .news-item:active { border-color: var(--orange); }
+  /* ---------- Стрічка новин ---------- */
+  .feed-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 4px 12px;
+    font-size: 14px;
+    color: var(--muted);
+  }
 
-  .news-date {
+  .feed-head strong {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .news {
+    list-style: none;
+  }
+
+  .news-item {
+    position: relative;
+    padding: 16px 14px 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .news-item:first-child { border-top: 1px solid var(--line); }
+
+  .news-button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 12px;
     color: var(--muted);
   }
 
+  .tag-new {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--orange);
+    color: #111;
+    font-weight: 700;
+    font-size: 11px;
+  }
+
   .news-title {
     margin-top: 6px;
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 700;
     line-height: 1.35;
+    padding-right: 28px;
   }
 
   .news-summary {
     margin-top: 6px;
-    font-size: 14px;
-    color: #c7c7c7;
-    line-height: 1.5;
+    font-size: 14.5px;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+
+  .toggle-icon {
+    position: absolute;
+    right: 2px;
+    top: 22px;
+    width: 18px;
+    height: 18px;
+    color: var(--muted);
+    transition: transform 0.35s var(--ease), color 0.2s ease;
+  }
+
+  .news-item.open .toggle-icon {
+    transform: rotate(180deg);
+    color: var(--orange);
   }
 
   .news-full {
-    display: none;
-    margin-top: 10px;
-    font-size: 14px;
-    line-height: 1.6;
-    color: #e0e0e0;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s var(--ease);
   }
 
-  .news-item.open .news-full { display: block; }
+  .news-item.open .news-full { grid-template-rows: 1fr; }
 
-  .news-source {
+  .news-full > div { overflow: hidden; }
+
+  .news-full p {
     margin-top: 10px;
-    font-size: 12px;
+    font-size: 15px;
+    color: #e4e4e4;
+    line-height: 1.6;
+  }
+
+  .source-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 12px;
+    font-size: 13px;
+  }
+
+  .source {
+    color: var(--orange);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .source:hover { text-decoration: underline; }
+
+  .empty {
+    padding: 40px 12px;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  /* ---------- Помічник ---------- */
+  .assistant-head {
+    padding: 4px 4px 14px;
+  }
+
+  .assistant-head h2 {
+    font-family: "Unbounded", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .assistant-head p {
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 14px 0 6px;
+  }
+
+  .chip {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--text-2);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .chip:hover, .chip:active {
+    border-color: var(--orange);
     color: var(--orange);
   }
 
   .chat-log {
-    min-height: 60vh;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding-bottom: 12px;
+    margin-top: 10px;
+    min-height: 220px;
   }
 
   .bubble {
-    max-width: 85%;
-    padding: 10px 14px;
-    border-radius: 14px;
-    font-size: 14px;
+    max-width: 86%;
+    padding: 11px 14px;
+    border-radius: 16px;
+    font-size: 14.5px;
     line-height: 1.5;
+    animation: enter 0.35s var(--ease) both;
   }
 
   .bubble.bot {
     background: var(--surface);
     border: 1px solid var(--line);
+    border-bottom-left-radius: 4px;
     align-self: flex-start;
   }
 
   .bubble.user {
     background: var(--orange);
     color: #111;
+    font-weight: 600;
+    border-bottom-right-radius: 4px;
     align-self: flex-end;
   }
 
   .chat-form {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: calc(76px + var(--safe-bottom));
-    padding: 10px 16px;
-    background: var(--bg);
+    position: sticky;
+    bottom: calc(var(--nav-h) + var(--badge-h) + var(--safe-bottom) + 8px);
+    margin-top: 16px;
     display: flex;
-    gap: 10px;
+    gap: 8px;
+    padding: 8px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
   }
 
   .chat-form input {
     flex: 1;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 12px 14px;
-    color: var(--text);
-    font: inherit;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    padding: 10px 8px;
     font-size: 15px;
     outline: none;
   }
 
-  .chat-form input:focus { border-color: var(--orange); }
+  .chat-form input::placeholder { color: var(--muted); }
 
   .chat-form button {
     background: var(--orange);
     color: #111;
     border: none;
     border-radius: 12px;
-    padding: 0 18px;
-    font: inherit;
+    padding: 0 16px;
     font-weight: 700;
     cursor: pointer;
+    transition: background 0.2s ease;
   }
 
+  .chat-form button:hover { background: var(--orange-deep); }
+
+  /* ---------- Нижня навігація ---------- */
   nav {
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 0;
-    background: var(--surface);
+    bottom: calc(var(--badge-h) + var(--safe-bottom));
+    background: rgba(20, 20, 20, 0.94);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid var(--line);
     display: flex;
-    padding: 8px 12px calc(8px + var(--safe-bottom));
     gap: 10px;
+    padding: 8px 12px;
+    z-index: 10;
   }
 
   nav button {
     flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     background: transparent;
-    border: 1px solid var(--line);
-    color: var(--muted);
+    border: 1px solid transparent;
     border-radius: 12px;
-    padding: 12px 8px;
-    font: inherit;
-    font-size: 15px;
+    padding: 11px 8px;
+    color: var(--muted);
     font-weight: 700;
+    font-size: 15px;
     cursor: pointer;
-    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+  }
+
+  nav button svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
   }
 
   nav button.active {
-    background: var(--orange-soft);
     color: var(--orange);
-    border-color: var(--orange);
+    background: var(--orange-soft);
+    border-color: rgba(255, 122, 26, 0.45);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    * { transition: none !important; }
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="brand">ПОЛТАВА НОВИНИ</div>
-  <div class="greeting" id="greeting">Ласкаво просимо, розбійнику! Тут найсвіжіші новини Полтави без зайвого шуму.</div>
+  <div class="topbar">
+    <div class="brand">Полтава<span> Новини</span></div>
+    <div class="updated" id="updated">Оновлюється…</div>
+  </div>
+  <div class="greeting">Ласкаво просимо, розбійнику! Тут найсвіжіші новини Полтави без зайвого шуму.</div>
 </header>
 
 <main>
-  <section class="view active" id="view-news">
-    <div id="news-list"></div>
+  <!-- Вкладка: Новини -->
+  <section class="view active" id="view-news" aria-label="Стрічка новин">
+    <div class="feed-head">
+      <span>Найновіше зверху</span>
+      <strong id="count">0 новин</strong>
+    </div>
+    <ul class="news" id="news-list"></ul>
+    <div class="empty" id="empty" hidden>Поки що немає новин. Перевіримо джерела трохи пізніше.</div>
   </section>
 
-  <section class="view" id="view-ai">
-    <div class="chat-log" id="chat-log">
-      <div class="bubble bot">Привіт! Я помічник по новинах Полтави. Скоро тут з'явиться пошук по всіх джерелах. Поки що запитай про сьогоднішні новини, і я скажу, коли буду готовий.</div>
+  <!-- Вкладка: Помічник -->
+  <section class="view" id="view-ai" aria-label="Помічник із новин">
+    <div class="assistant-head">
+      <h2>Помічник</h2>
+      <p>Запитай про новини Полтави: що сталося, де, коли і як це зараз.</p>
     </div>
+
+    <div class="chips" id="chips">
+      <button class="chip" type="button" data-q="Які новини сьогодні?">Які новини сьогодні?</button>
+      <button class="chip" type="button" data-q="Що сталося в центрі міста?">Що сталося в центрі?</button>
+      <button class="chip" type="button" data-q="Які є оголошення від міської ради?">Оголошення міської ради</button>
+    </div>
+
+    <div class="chat-log" id="chat-log" aria-live="polite">
+      <div class="bubble bot">Привіт! Я помічник по новинах Полтави. Пошук по всіх джерелах підключимо наступним етапом. Поки можеш вибрати запит вище або написати свій.</div>
+    </div>
+
+    <form class="chat-form" id="chat-form" autocomplete="off">
+      <input type="text" id="chat-input" placeholder="Напиши запит про Полтаву" aria-label="Запит до помічника" maxlength="300">
+      <button type="submit">Надіслати</button>
+    </form>
   </section>
 </main>
 
-<form class="chat-form" id="chat-form" style="display:none">
-  <input type="text" id="chat-input" placeholder="Запитай про новини Полтави" autocomplete="off">
-  <button type="submit">Надіслати</button>
-</form>
-
-<nav>
-  <button class="active" data-view="news">Новини</button>
-  <button data-view="ai">Помічник ШІ</button>
+<nav aria-label="Головна навігація">
+  <button class="active" type="button" data-view="news" aria-current="page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 5h13v14H6a2 2 0 0 1-2-2V5z"/>
+      <path d="M17 9h3v8a2 2 0 0 1-2 2"/>
+      <path d="M7 9h7M7 12h7M7 15h4"/>
+    </svg>
+    Новини
+  </button>
+  <button type="button" data-view="ai">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.5A8 8 0 1 1 21 12z"/>
+    </svg>
+    Помічник ШІ
+  </button>
 </nav>
 
 <script>
-  // Тимчасові новини для перевірки дизайну. Пізніше сюди підключимо збір із джерел.
-  const news = [
+  // Пробні новини. Їх показуємо, якщо файл news.json ще не створений.
+  const SAMPLE = [
     {
-      date: "08.11.2026, 19:20",
+      published: "2026-11-08T19:20:00+02:00",
       title: "Тестова новина: тут буде заголовок з міського сайту",
-      summary: "Короткий анонс новини. Тут з'являтиметься початок тексту з першоджерела.",
+      summary: "Короткий анонс новини. Тут з'явиться початок тексту з першоджерела.",
       full: "Повний текст або розгорнута інформація з першоджерела з'явиться тут після підключення збору новин.",
-      source: "Джерело: приклад"
+      source: "Приклад джерела",
+      url: "#"
     },
     {
-      date: "08.11.2026, 17:05",
-      title: "Ще одна тестова новина для перевірки ленти",
+      published: "2026-11-08T17:05:00+02:00",
+      title: "Ще одна тестова новина для перевірки стрічки",
       summary: "Новини сортуються: найсвіжіші зверху, старіші нижче.",
       full: "Натисни на картку, щоб розгорнути або згорнути повний текст.",
-      source: "Джерело: приклад"
+      source: "Приклад джерела",
+      url: "#"
     }
   ];
 
-  const list = document.getElementById("news-list");
-  news.forEach(item => {
-    const card = document.createElement("div");
-    card.className = "news-item";
-    card.innerHTML = `
-      <div class="news-date"></div>
-      <div class="news-title"></div>
-      <div class="news-summary"></div>
-      <div class="news-full"></div>
-      <div class="news-source"></div>`;
-    card.querySelector(".news-date").textContent = item.date;
-    card.querySelector(".news-title").textContent = item.title;
-    card.querySelector(".news-summary").textContent = item.summary;
-    card.querySelector(".news-full").textContent = item.full;
-    card.querySelector(".news-source").textContent = item.source;
-    card.addEventListener("click", () => card.classList.toggle("open"));
-    list.appendChild(card);
-  });
+  const NEW_WINDOW_MS = 60 * 60 * 1000; // позначка «Нове» на новинах за останню годину
+  const REFRESH_MS = 60 * 1000;         // оновлення стрічки щохвилини
 
-  // Перемикання вкладок без перезавантаження сторінки
-  const buttons = document.querySelectorAll("nav button");
-  const views = { news: "view-news", ai: "view-ai" };
+  const listEl = document.getElementById("news-list");
+  const emptyEl = document.getElementById("empty");
+  const countEl = document.getElementById("count");
+  const updatedEl = document.getElementById("updated");
+
+  const timeFmt = new Intl.DateTimeFormat("uk-UA", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+
+  function el(tag, cls, text) {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function buildItem(item) {
+    const li = el("li", "news-item");
+    const isNew = Date.now() - new Date(item.published).getTime() < NEW_WINDOW_MS;
+
+    const btn = el("button", "news-button");
+    btn.type = "button";
+    btn.setAttribute("aria-expanded", "false");
+
+    const meta = el("div", "meta");
+    meta.append(el("time", null, timeFmt.format(new Date(item.published))));
+    if (isNew) meta.append(el("span", "tag-new", "Нове"));
+
+    const title = el("h3", "news-title", item.title);
+    const summary = el("p", "news-summary", item.summary);
+
+    const full = el("div", "news-full");
+    const inner = el("div");
+    inner.append(el("p", null, item.full));
+    const row = el("div", "source-row");
+    const link = el("a", "source", item.source);
+    link.href = item.url || "#";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    row.append(link);
+    inner.append(row);
+    full.append(inner);
+
+    const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("class", "toggle-icon");
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("fill", "none");
+    icon.setAttribute("stroke", "currentColor");
+    icon.setAttribute("stroke-width", "2");
+    icon.setAttribute("stroke-linecap", "round");
+    icon.setAttribute("aria-hidden", "true");
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", "M6 9l6 6 6-6");
+    icon.append(path);
+
+    btn.append(meta, title, summary);
+    li.append(btn, full, icon);
+
+    btn.addEventListener("click", () => {
+      const open = li.classList.toggle("open");
+      btn.setAttribute("aria-expanded", String(open));
+    });
+
+    return li;
+  }
+
+  function render(items) {
+    const sorted = [...items].sort((a, b) => new Date(b.published) - new Date(a.published));
+    listEl.replaceChildren(...sorted.map(buildItem));
+    countEl.textContent = `${sorted.length} ${pluralNews(sorted.length)}`;
+    emptyEl.hidden = sorted.length > 0;
+  }
+
+  function pluralNews(n) {
+    const mod10 = n % 10, mod100 = n % 100;
+    if (mod10 === 1 && mod100 !== 11) return "новина";
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "новини";
+    return "новин";
+  }
+
+  async function loadNews() {
+    let items = SAMPLE;
+    try {
+      const res = await fetch("news.json", { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) items = data;
+      }
+    } catch (e) {
+      // Немає файлу або мережі: лишаємо пробні новини
+    }
+    render(items);
+    updatedEl.textContent = `Оновлено ${timeFmt.format(new Date()).split(", ").pop()}`;
+  }
+
+  loadNews();
+  setInterval(loadNews, REFRESH_MS);
+
+  // ---------- Перемикання вкладок ----------
+  const navButtons = document.querySelectorAll("nav button");
   const chatForm = document.getElementById("chat-form");
 
-  buttons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const name = btn.dataset.view;
-      buttons.forEach(b => b.classList.toggle("active", b === btn));
-      Object.values(views).forEach(id => document.getElementById(id).classList.remove("active"));
-      document.getElementById(views[name]).classList.add("active");
-      chatForm.style.display = name === "ai" ? "flex" : "none";
+  function show(name) {
+    navButtons.forEach(b => {
+      const active = b.dataset.view === name;
+      b.classList.toggle("active", active);
+      if (active) b.setAttribute("aria-current", "page");
+      else b.removeAttribute("aria-current");
     });
+    document.getElementById("view-news").classList.toggle("active", name === "news");
+    document.getElementById("view-ai").classList.toggle("active", name === "ai");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  navButtons.forEach(btn => btn.addEventListener("click", () => show(btn.dataset.view)));
+
+  // ---------- Помічник (заглушка до підключення ШІ) ----------
+  const log = document.getElementById("chat-log");
+  const input = document.getElementById("chat-input");
+
+  function addBubble(text, who) {
+    log.append(el("div", `bubble ${who}`, text));
+    log.lastElementChild.scrollIntoView({ behavior: "smooth", block: "end" });
+  }
+
+  function ask(text) {
+    const q = text.trim();
+    if (!q) return;
+    addBubble(q, "user");
+    setTimeout(() => {
+      addBubble("Пошук по новинах ще не підключено. Це буде наступним етапом.", "bot");
+    }, 350);
+  }
+
+  document.getElementById("chips").addEventListener("click", e => {
+    const chip = e.target.closest(".chip");
+    if (chip) ask(chip.dataset.q);
   });
 
-  // Поки що відповідь-заглушка
   chatForm.addEventListener("submit", e => {
     e.preventDefault();
-    const input = document.getElementById("chat-input");
-    const text = input.value.trim();
-    if (!text) return;
-    const log = document.getElementById("chat-log");
-    const user = document.createElement("div");
-    user.className = "bubble user";
-    user.textContent = text;
-    const bot = document.createElement("div");
-    bot.className = "bubble bot";
-    bot.textContent = "Пошук по новинах ще не підключено. Це буде наступним етапом.";
-    log.append(user, bot);
+    ask(input.value);
     input.value = "";
   });
 </script>
