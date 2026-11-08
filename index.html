@@ -10,55 +10,73 @@
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0b0b0b;
-    --surface: #141414;
-    --surface-2: #1c1c1c;
-    --line: #242424;
+    --bg: #0a0a0a;
+    --glass: rgba(255, 255, 255, 0.04);
+    --glass-strong: rgba(22, 22, 22, 0.72);
+    --glass-edge: rgba(255, 255, 255, 0.08);
+    --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.06);
     --orange: #ff7a1a;
-    --orange-deep: #e0600a;
-    --orange-soft: rgba(255, 122, 26, 0.12);
-    --text: #f3f3f3;
+    --orange-hi: #ff9a4d;
+    --orange-soft: rgba(255, 122, 26, 0.14);
+    --text: #f4f4f4;
     --text-2: #c9c9c9;
-    --muted: #8a8a8a;
-    --nav-h: 66px;
+    --muted: #8b8b8b;
     --badge-h: 64px;
+    --nav-h: 64px;
+    --nav-gap: 6px;
     --safe-bottom: env(safe-area-inset-bottom, 0px);
-    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --nav-bottom: calc(var(--badge-h) + var(--safe-bottom) + var(--nav-gap));
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { -webkit-text-size-adjust: 100%; }
 
   body {
+    position: relative;
+    min-height: 100dvh;
     background: var(--bg);
     color: var(--text);
     font-family: "Manrope", system-ui, -apple-system, sans-serif;
     font-size: 16px;
     line-height: 1.5;
-    min-height: 100dvh;
-    padding-bottom: calc(var(--nav-h) + var(--badge-h) + var(--safe-bottom) + 24px);
+    padding-bottom: calc(var(--nav-bottom) + var(--nav-h) + 28px);
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Мягкий световой фон. Статичный, без анимации, поэтому не тормозит */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(70vw 50vh at 8% -8%, rgba(255, 122, 26, 0.17), transparent 62%),
+      radial-gradient(60vw 45vh at 100% 35%, rgba(255, 122, 26, 0.07), transparent 66%),
+      radial-gradient(50vw 40vh at 50% 110%, rgba(255, 122, 26, 0.06), transparent 70%);
   }
 
   button, input { font: inherit; color: inherit; }
 
   :focus-visible {
     outline: 2px solid var(--orange);
-    outline-offset: 2px;
-    border-radius: 6px;
+    outline-offset: 3px;
+    border-radius: 10px;
   }
 
   /* ---------- Шапка ---------- */
   header {
-    padding: 26px 20px 0;
     max-width: 720px;
     margin: 0 auto;
+    padding: 30px 20px 0;
   }
 
   .topbar {
     display: flex;
-    align-items: baseline;
+    align-items: flex-end;
     justify-content: space-between;
     gap: 12px;
   }
@@ -66,73 +84,136 @@
   .brand {
     font-family: "Unbounded", sans-serif;
     font-weight: 800;
-    font-size: clamp(20px, 5.4vw, 30px);
-    line-height: 1.05;
+    font-size: clamp(21px, 5.6vw, 32px);
+    line-height: 1;
     letter-spacing: -0.02em;
     color: var(--orange);
   }
 
-  .brand span {
-    color: var(--text);
-  }
+  .brand span { color: var(--text); }
 
-  .updated {
+  .live {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
     font-size: 12px;
     color: var(--muted);
     white-space: nowrap;
+    padding-bottom: 2px;
+  }
+
+  .live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--orange);
+    box-shadow: 0 0 0 0 rgba(255, 122, 26, 0.6);
+    animation: pulse 2.4s var(--ease-out) infinite;
+  }
+
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255, 122, 26, 0.55); }
+    70%  { box-shadow: 0 0 0 8px rgba(255, 122, 26, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 122, 26, 0); }
   }
 
   .greeting {
-    margin-top: 16px;
-    padding: 14px 16px 14px 18px;
-    background: var(--surface);
-    border-radius: 0 14px 14px 0;
-    border-left: 3px solid var(--orange);
+    margin-top: 18px;
+    padding: 15px 18px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: var(--glass);
+    border: 1px solid var(--glass-edge);
+    border-radius: 18px;
+    box-shadow: var(--glass-shine);
     font-size: 15px;
     color: var(--text-2);
+  }
+
+  .greeting::before {
+    content: "";
+    flex: 0 0 8px;
+    height: 8px;
+    margin-top: 8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--orange-hi), var(--orange));
+    box-shadow: 0 0 14px rgba(255, 122, 26, 0.6);
   }
 
   /* ---------- Основна частина ---------- */
   main {
     max-width: 720px;
     margin: 0 auto;
-    padding: 18px 16px 0;
+    padding: 20px 16px 0;
   }
 
   .view { display: none; }
-  .view.active { display: block; animation: enter 0.45s var(--ease) both; }
 
-  @keyframes enter {
-    from { opacity: 0; transform: translateY(8px); }
+  .view.active {
+    display: block;
+    animation: viewIn 0.5s var(--ease-out) both;
+  }
+
+  @keyframes viewIn {
+    from { opacity: 0; transform: translate3d(0, 10px, 0); }
     to   { opacity: 1; transform: none; }
   }
 
-  /* ---------- Стрічка новин ---------- */
-  .feed-head {
+  .section-head {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
-    padding: 4px 4px 12px;
+    padding: 0 4px 14px;
     font-size: 14px;
     color: var(--muted);
   }
 
-  .feed-head strong {
+  .section-head strong {
     color: var(--text);
     font-weight: 700;
   }
 
+  /* ---------- Стрічка новин ---------- */
   .news {
     list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 
   .news-item {
     position: relative;
-    padding: 16px 14px 16px 0;
-    border-bottom: 1px solid var(--line);
+    background: var(--glass);
+    border: 1px solid var(--glass-edge);
+    border-radius: 20px;
+    box-shadow: var(--glass-shine);
+    transition: border-color 0.35s var(--ease-out), background-color 0.35s var(--ease-out), transform 0.35s var(--ease-out);
   }
 
-  .news-item:first-child { border-top: 1px solid var(--line); }
+  .news-item.enter {
+    animation: rise 0.7s var(--ease-out) both;
+    animation-delay: var(--d, 0ms);
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translate3d(0, 14px, 0); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .news-item.is-newest {
+    border-color: rgba(255, 122, 26, 0.35);
+    box-shadow: var(--glass-shine), 0 14px 40px -18px rgba(255, 122, 26, 0.45);
+  }
+
+  .news-item.open {
+    background: rgba(255, 255, 255, 0.055);
+    border-color: rgba(255, 122, 26, 0.3);
+  }
+
+  @media (hover: hover) {
+    .news-item:hover { background: rgba(255, 255, 255, 0.055); }
+  }
 
   .news-button {
     display: block;
@@ -141,7 +222,8 @@
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0;
+    padding: 18px 52px 18px 18px;
+    border-radius: 20px;
   }
 
   .meta {
@@ -153,21 +235,20 @@
   }
 
   .tag-new {
-    display: inline-block;
-    padding: 1px 8px;
+    padding: 2px 9px;
     border-radius: 999px;
-    background: var(--orange);
-    color: #111;
-    font-weight: 700;
+    background: linear-gradient(135deg, var(--orange-hi), var(--orange));
+    color: #120a04;
+    font-weight: 800;
     font-size: 11px;
+    letter-spacing: 0.01em;
   }
 
   .news-title {
-    margin-top: 6px;
+    margin-top: 8px;
     font-size: 17px;
     font-weight: 700;
     line-height: 1.35;
-    padding-right: 28px;
   }
 
   .news-summary {
@@ -177,74 +258,104 @@
     line-height: 1.55;
   }
 
-  .toggle-icon {
+  .toggle {
     position: absolute;
-    right: 2px;
+    right: 16px;
     top: 22px;
-    width: 18px;
-    height: 18px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-edge);
     color: var(--muted);
-    transition: transform 0.35s var(--ease), color 0.2s ease;
+    transition: transform 0.45s var(--ease-out), color 0.3s ease, background-color 0.3s ease;
+    pointer-events: none;
   }
 
-  .news-item.open .toggle-icon {
+  .toggle svg { width: 14px; height: 14px; }
+
+  .news-item.open .toggle {
     transform: rotate(180deg);
-    color: var(--orange);
+    color: #120a04;
+    background: var(--orange);
+    border-color: transparent;
   }
 
+  /* Розгортання через grid: плавна висота без вимірювань у JS */
   .news-full {
     display: grid;
     grid-template-rows: 0fr;
-    transition: grid-template-rows 0.4s var(--ease);
+    transition: grid-template-rows 0.5s var(--ease-out);
   }
 
   .news-item.open .news-full { grid-template-rows: 1fr; }
 
   .news-full > div { overflow: hidden; }
 
+  .news-full-inner {
+    padding: 0 18px 18px;
+    opacity: 0;
+    transform: translate3d(0, -4px, 0);
+    transition: opacity 0.4s ease 0.05s, transform 0.5s var(--ease-out) 0.05s;
+  }
+
+  .news-item.open .news-full-inner {
+    opacity: 1;
+    transform: none;
+  }
+
   .news-full p {
-    margin-top: 10px;
     font-size: 15px;
-    color: #e4e4e4;
+    color: #e6e6e6;
     line-height: 1.6;
   }
 
   .source-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 12px;
+    margin-top: 14px;
     font-size: 13px;
   }
 
   .source {
-    color: var(--orange);
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: var(--orange-soft);
+    color: var(--orange-hi);
+    font-weight: 700;
     text-decoration: none;
+    transition: background-color 0.25s ease;
   }
 
-  .source:hover { text-decoration: underline; }
+  .source:hover { background: rgba(255, 122, 26, 0.22); }
 
   .empty {
-    padding: 40px 12px;
+    padding: 48px 16px;
     text-align: center;
     color: var(--muted);
+    background: var(--glass);
+    border: 1px dashed var(--glass-edge);
+    border-radius: 20px;
   }
 
   /* ---------- Помічник ---------- */
-  .assistant-head {
-    padding: 4px 4px 14px;
-  }
+  #view-ai { padding-bottom: 180px; }
+
+  .assistant-head { padding: 2px 4px 4px; }
 
   .assistant-head h2 {
     font-family: "Unbounded", sans-serif;
-    font-size: 18px;
+    font-size: 19px;
     font-weight: 600;
   }
 
   .assistant-head p {
-    margin-top: 4px;
+    margin-top: 6px;
     font-size: 14px;
     color: var(--muted);
   }
@@ -253,87 +364,95 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin: 14px 0 6px;
+    margin: 16px 0 8px;
   }
 
   .chip {
-    background: var(--surface);
-    border: 1px solid var(--line);
+    background: var(--glass);
+    border: 1px solid var(--glass-edge);
     color: var(--text-2);
     border-radius: 999px;
-    padding: 8px 14px;
+    padding: 9px 15px;
     font-size: 13.5px;
     cursor: pointer;
-    transition: border-color 0.2s ease, color 0.2s ease;
+    transition: border-color 0.25s ease, color 0.25s ease, background-color 0.25s ease, transform 0.25s var(--ease-out);
   }
 
-  .chip:hover, .chip:active {
-    border-color: var(--orange);
-    color: var(--orange);
+  .chip:active { transform: scale(0.97); }
+
+  @media (hover: hover) {
+    .chip:hover {
+      border-color: rgba(255, 122, 26, 0.5);
+      color: var(--orange-hi);
+    }
   }
 
   .chat-log {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-top: 10px;
-    min-height: 220px;
+    margin-top: 12px;
+    min-height: 200px;
   }
 
   .bubble {
-    scroll-margin-bottom: 170px;
-    max-width: 86%;
-    padding: 11px 14px;
-    border-radius: 16px;
+    max-width: 84%;
+    padding: 12px 15px;
+    border-radius: 18px;
     font-size: 14.5px;
     line-height: 1.5;
-    animation: enter 0.35s var(--ease) both;
+    scroll-margin-bottom: 200px;
+    animation: bubbleIn 0.45s var(--ease-out) both;
+  }
+
+  @keyframes bubbleIn {
+    from { opacity: 0; transform: translate3d(0, 8px, 0) scale(0.98); }
+    to   { opacity: 1; transform: none; }
   }
 
   .bubble.bot {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-bottom-left-radius: 4px;
+    background: var(--glass);
+    border: 1px solid var(--glass-edge);
+    box-shadow: var(--glass-shine);
+    border-bottom-left-radius: 6px;
     align-self: flex-start;
   }
 
   .bubble.user {
-    background: var(--orange);
-    color: #111;
+    background: linear-gradient(135deg, var(--orange-hi), var(--orange));
+    color: #120a04;
     font-weight: 600;
-    border-bottom-right-radius: 4px;
+    border-bottom-right-radius: 6px;
     align-self: flex-end;
+    box-shadow: 0 10px 26px -12px rgba(255, 122, 26, 0.7);
   }
 
-  #view-ai {
-    padding-bottom: 150px;
-  }
-
+  /* Поле ввода: матове стекло, плаває над меню */
   .chat-form {
     position: fixed;
     left: 12px;
     right: 12px;
-    bottom: calc(var(--nav-h) + var(--badge-h) + var(--safe-bottom) + 10px);
+    bottom: calc(var(--nav-bottom) + var(--nav-h) + 10px);
     z-index: 9;
     max-width: 696px;
     margin: 0 auto;
     display: flex;
     gap: 8px;
-    padding: 8px;
-    background: #141414;
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
+    padding: 7px;
+    background: var(--glass-strong);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid var(--glass-edge);
+    border-radius: 22px;
+    box-shadow: 0 16px 40px -14px rgba(0, 0, 0, 0.8), var(--glass-shine);
   }
-
-
 
   .chat-form input {
     flex: 1;
     min-width: 0;
     background: transparent;
     border: none;
-    padding: 10px 8px;
+    padding: 11px 10px 11px 12px;
     font-size: 15px;
     outline: none;
   }
@@ -341,67 +460,98 @@
   .chat-form input::placeholder { color: var(--muted); }
 
   .chat-form button {
-    background: var(--orange);
-    color: #111;
     border: none;
-    border-radius: 12px;
-    padding: 0 16px;
+    border-radius: 16px;
+    padding: 0 18px;
     font-weight: 700;
+    color: #120a04;
+    background: linear-gradient(135deg, var(--orange-hi), var(--orange));
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: transform 0.2s var(--ease-out), filter 0.2s ease;
   }
 
-  .chat-form button:hover { background: var(--orange-deep); }
+  .chat-form button:active { transform: scale(0.96); }
 
-  /* ---------- Нижня навігація ---------- */
+  @media (hover: hover) {
+    .chat-form button:hover { filter: brightness(1.06); }
+  }
+
+  /* ---------- Плаваюча нижня навігація ---------- */
   nav {
     position: fixed;
-    left: 0;
-    right: 0;
-    bottom: calc(var(--badge-h) + var(--safe-bottom));
-    background: rgba(20, 20, 20, 0.94);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-top: 1px solid var(--line);
-    display: flex;
-    gap: 10px;
-    padding: 8px 12px;
+    left: 12px;
+    right: 12px;
+    bottom: var(--nav-bottom);
     z-index: 10;
+    max-width: 696px;
+    margin: 0 auto;
+    height: var(--nav-h);
+    padding: 5px;
+    background: var(--glass-strong);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid var(--glass-edge);
+    border-radius: 24px;
+    box-shadow: 0 18px 44px -16px rgba(0, 0, 0, 0.85), var(--glass-shine);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Рухомий індикатор: переміщується через transform, без лагів */
+  .indicator {
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    left: 5px;
+    width: calc(50% - 5px);
+    border-radius: 19px;
+    background: linear-gradient(160deg, rgba(255, 150, 80, 0.26), rgba(255, 122, 26, 0.1));
+    border: 1px solid rgba(255, 122, 26, 0.42);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), 0 0 22px -6px rgba(255, 122, 26, 0.55);
+    transition: transform 0.6s var(--ease-out);
+    will-change: transform;
+  }
+
+  nav[data-active="ai"] .indicator {
+    transform: translate3d(100%, 0, 0);
   }
 
   nav button {
-    flex: 1;
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     background: transparent;
-    border: 1px solid transparent;
-    border-radius: 12px;
-    padding: 11px 8px;
+    border: none;
+    border-radius: 19px;
     color: var(--muted);
     font-weight: 700;
     font-size: 15px;
     cursor: pointer;
-    transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+    transition: color 0.4s ease;
   }
 
   nav button svg {
     width: 20px;
     height: 20px;
     flex-shrink: 0;
+    transition: transform 0.5s var(--ease-out);
   }
 
-  nav button.active {
-    color: var(--orange);
-    background: var(--orange-soft);
-    border-color: rgba(255, 122, 26, 0.45);
-  }
+  nav button.active { color: var(--orange-hi); }
+
+  nav button.active svg { transform: scale(1.08); }
+
+  nav button:active { transform: scale(0.97); }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
-      animation: none !important;
-      transition: none !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
 </style>
@@ -411,7 +561,7 @@
 <header>
   <div class="topbar">
     <div class="brand">Полтава<span> Новини</span></div>
-    <div class="updated" id="updated">Оновлюється…</div>
+    <div class="live"><span class="live-dot" aria-hidden="true"></span><span id="updated">Оновлюється…</span></div>
   </div>
   <div class="greeting">Ласкаво просимо, розбійнику! Тут найсвіжіші новини Полтави без зайвого шуму.</div>
 </header>
@@ -419,7 +569,7 @@
 <main>
   <!-- Вкладка: Новини -->
   <section class="view active" id="view-news" aria-label="Стрічка новин">
-    <div class="feed-head">
+    <div class="section-head">
       <span>Найновіше зверху</span>
       <strong id="count">0 новин</strong>
     </div>
@@ -451,7 +601,8 @@
   </section>
 </main>
 
-<nav aria-label="Головна навігація">
+<nav id="tabbar" data-active="news" aria-label="Головна навігація">
+  <span class="indicator" aria-hidden="true"></span>
   <button class="active" type="button" data-view="news" aria-current="page">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M4 5h13v14H6a2 2 0 0 1-2-2V5z"/>
@@ -489,7 +640,7 @@
     }
   ];
 
-  const NEW_WINDOW_MS = 60 * 60 * 1000; // позначка «Нове» на новинах за останню годину
+  const NEW_WINDOW_MS = 60 * 60 * 1000; // позначка «Нове» для новин за останню годину
   const REFRESH_MS = 60 * 1000;         // оновлення стрічки щохвилини
 
   const listEl = document.getElementById("news-list");
@@ -498,6 +649,8 @@
   const updatedEl = document.getElementById("updated");
 
   const timeFmt = new Intl.DateTimeFormat("uk-UA", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+  const clockFmt = new Intl.DateTimeFormat("uk-UA", { hour: "2-digit", minute: "2-digit" });
+  const SVG_NS = "http://www.w3.org/2000/svg";
 
   function el(tag, cls, text) {
     const node = document.createElement(tag);
@@ -506,9 +659,29 @@
     return node;
   }
 
-  function buildItem(item) {
+  function buildChevron() {
+    const svg = document.createElementNS(SVG_NS, "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2.2");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+    svg.setAttribute("aria-hidden", "true");
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", "M6 9l6 6 6-6");
+    svg.append(path);
+    return svg;
+  }
+
+  function buildItem(item, index, animate) {
     const li = el("li", "news-item");
-    const isNew = Date.now() - new Date(item.published).getTime() < NEW_WINDOW_MS;
+    const age = Date.now() - new Date(item.published).getTime();
+    if (index === 0) li.classList.add("is-newest");
+    if (animate) {
+      li.classList.add("enter");
+      li.style.setProperty("--d", `${Math.min(index, 8) * 70}ms`);
+    }
 
     const btn = el("button", "news-button");
     btn.type = "button";
@@ -516,13 +689,14 @@
 
     const meta = el("div", "meta");
     meta.append(el("time", null, timeFmt.format(new Date(item.published))));
-    if (isNew) meta.append(el("span", "tag-new", "Нове"));
+    if (age < NEW_WINDOW_MS) meta.append(el("span", "tag-new", "Нове"));
 
-    const title = el("h3", "news-title", item.title);
-    const summary = el("p", "news-summary", item.summary);
+    btn.append(meta, el("h3", "news-title", item.title), el("p", "news-summary", item.summary), el("span", "toggle"));
+    btn.querySelector(".toggle").append(buildChevron());
 
     const full = el("div", "news-full");
-    const inner = el("div");
+    const wrap = el("div");
+    const inner = el("div", "news-full-inner");
     inner.append(el("p", null, item.full));
     const row = el("div", "source-row");
     const link = el("a", "source", item.source);
@@ -531,22 +705,10 @@
     link.rel = "noopener noreferrer";
     row.append(link);
     inner.append(row);
-    full.append(inner);
+    wrap.append(inner);
+    full.append(wrap);
 
-    const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    icon.setAttribute("class", "toggle-icon");
-    icon.setAttribute("viewBox", "0 0 24 24");
-    icon.setAttribute("fill", "none");
-    icon.setAttribute("stroke", "currentColor");
-    icon.setAttribute("stroke-width", "2");
-    icon.setAttribute("stroke-linecap", "round");
-    icon.setAttribute("aria-hidden", "true");
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("d", "M6 9l6 6 6-6");
-    icon.append(path);
-
-    btn.append(meta, title, summary);
-    li.append(btn, full, icon);
+    li.append(btn, full);
 
     btn.addEventListener("click", () => {
       const open = li.classList.toggle("open");
@@ -556,9 +718,12 @@
     return li;
   }
 
+  let firstRender = true;
+
   function render(items) {
     const sorted = [...items].sort((a, b) => new Date(b.published) - new Date(a.published));
-    listEl.replaceChildren(...sorted.map(buildItem));
+    listEl.replaceChildren(...sorted.map((item, i) => buildItem(item, i, firstRender)));
+    firstRender = false;
     countEl.textContent = `${sorted.length} ${pluralNews(sorted.length)}`;
     emptyEl.hidden = sorted.length > 0;
   }
@@ -582,18 +747,20 @@
       // Немає файлу або мережі: лишаємо пробні новини
     }
     render(items);
-    updatedEl.textContent = `Оновлено ${timeFmt.format(new Date()).split(", ").pop()}`;
+    updatedEl.textContent = `Оновлено ${clockFmt.format(new Date())}`;
   }
 
   loadNews();
   setInterval(loadNews, REFRESH_MS);
 
   // ---------- Перемикання вкладок ----------
-  const navButtons = document.querySelectorAll("nav button");
+  const tabbar = document.getElementById("tabbar");
+  const tabButtons = tabbar.querySelectorAll("button[data-view]");
   const chatForm = document.getElementById("chat-form");
 
   function show(name) {
-    navButtons.forEach(b => {
+    tabbar.dataset.active = name;
+    tabButtons.forEach(b => {
       const active = b.dataset.view === name;
       b.classList.toggle("active", active);
       if (active) b.setAttribute("aria-current", "page");
@@ -604,15 +771,16 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  navButtons.forEach(btn => btn.addEventListener("click", () => show(btn.dataset.view)));
+  tabButtons.forEach(btn => btn.addEventListener("click", () => show(btn.dataset.view)));
 
   // ---------- Помічник (заглушка до підключення ШІ) ----------
   const log = document.getElementById("chat-log");
   const input = document.getElementById("chat-input");
 
   function addBubble(text, who) {
-    log.append(el("div", `bubble ${who}`, text));
-    log.lastElementChild.scrollIntoView({ behavior: "smooth", block: "end" });
+    const b = el("div", `bubble ${who}`, text);
+    log.append(b);
+    b.scrollIntoView({ behavior: "smooth", block: "end" });
   }
 
   function ask(text) {
