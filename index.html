@@ -677,6 +677,7 @@
   const openIds = new Set();   // які новини розгорнуті, зберігаємо між оновленнями
   let lastKey = "";            // щоб не перемальовувати стрічку, якщо новин не змінилось
   let firstRender = true;
+  let currentNews = [];
 
   function el(tag, cls, text) {
     const node = document.createElement(tag);
@@ -776,6 +777,7 @@
 
   function render(items) {
     const sorted = [...items].sort((a, b) => new Date(b.published) - new Date(a.published));
+    currentNews = sorted;
     const key = JSON.stringify(sorted);
 
     if (key !== lastKey) {
@@ -833,15 +835,26 @@
     const b = el("div", `bubble ${who}`, text);
     log.append(b);
     b.scrollIntoView({ behavior: "smooth", block: "end" });
+    return b;
   }
 
-  function ask(text) {
+  async function ask(text) {
     const q = text.trim();
     if (!q) return;
     addBubble(q, "user");
-    setTimeout(() => {
-      addBubble("Пошук по новинах ще не підключено. Це буде наступним етапом.", "bot");
-    }, 350);
+    const pending = addBubble("Шукаю відповідь…", "bot");
+    try {
+      const res = await fetch("/.netlify/functions/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: q, news: currentNews.slice(0, 40) }),
+      });
+      const data = await res.json();
+      pending.textContent = data.answer || "Не вдалося отримати відповідь.";
+    } catch (e) {
+      pending.textContent = "Помічник тимчасово недоступний. Спробуй пізніше.";
+    }
+    pending.scrollIntoView({ behavior: "smooth", block: "end" });
   }
 
   document.getElementById("chips").addEventListener("click", e => {
